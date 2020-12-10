@@ -4,12 +4,7 @@ from . import views
 
 urlpatterns = [
     path('pizzas/', views.PizzaList.as_view()),
-    # path('posts/<int:pk>/', views.PostDetail.as_view()),
-    # path('posts/bookmarked/', views.BookmarkedPostList.as_view()),
-    # path('comments/', views.CommentList.as_view()),
-    # path('comments/<int:pk>/', views.CommentDetail.as_view()),
-    # path('likes/', views.LikeDetail.as_view()),
-    # path('bookmarks/', views.BookmarkDetail.as_view()),
+    # path('posts/<int:pk>/', views.PizzaDetail.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
