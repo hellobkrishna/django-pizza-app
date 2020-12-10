@@ -14,7 +14,16 @@ class Size(models.Model):
 
 class Type(models.Model):
     name = models.CharField(max_length=200)
-    
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+class Topping(models.Model):
+    name = models.CharField(max_length=200)
+
     class Meta:
         ordering = ['name']
 
@@ -24,17 +33,10 @@ class Type(models.Model):
 
 class Pizza(models.Model):
     name = models.CharField(max_length=200)
+    topping = models.ManyToManyField(Topping)
+    size = models.ForeignKey(Size, related_name='pizzas', on_delete=models.CASCADE)
+    type = models.ForeignKey(Type, related_name='pizzas', on_delete=models.CASCADE)
 
-    class Meta:
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
-
-
-class Topping(models.Model):
-    name = models.CharField(max_length=200)
-    pizza = models.ManyToManyField(Pizza)
 
     class Meta:
         ordering = ['name']
