@@ -4,6 +4,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+import json
 
 
 class PizzaList(APIView):
@@ -51,20 +52,78 @@ class PizzaDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# Create an API endpoint to create regular pizza and a square pizza.
 
-
-class SnippetList(APIView):
-    """
-    List all snippets, or create a new snippet.
-    """
-    def get(self, request, format=None):
-        snippets = Snippet.objects.all()
-        serializer = SnippetSerializer(snippets, many=True)
-        return Response(serializer.data)
-
+class CreateRegularPizza(APIView):
     def post(self, request, format=None):
-        serializer = SnippetSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        errors_response = {
+            "name":"this field is required",
+            "size":"this field is required",
+            "toppings":"this field is required and accepts a list"
+        }
+        toppings = None
+        type = None
+        size = None
+        name = None
+        try:
+            name = request.data["name"]
+            toppings = request.data["toppings"]
+            toppings_list = toppings
+            size = request.data["size"]
+
+            size = Size.objects.get(name = size)
+            type = Type.objects.get(name = "regular")
+
+
+
+            pizza = Pizza( name = name, type_id = type.id , size = size)
+            pizza.save()
+
+            for topping in toppings:
+                topping_obj = Topping.objects.get(name = topping)
+                pizza.topping.add(topping_obj)
+                pizza.save()
+            size_name = size.name
+
+            response = {"name":name,"size":size_name,"type": "regular","toppings": toppings_list}
+
+            return Response(response, status=status.HTTP_201_CREATED)
+        except:
+            return Response(errors_response, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateSquarePizza(APIView):
+    def post(self, request, format=None):
+        errors_response = {
+            "name":"this field is required",
+            "size":"this field is required",
+            "toppings":"this field is required and accepts a list"
+        }
+        toppings = None
+        type = None
+        size = None
+        name = None
+        try:
+            name = request.data["name"]
+            toppings = request.data["toppings"]
+            toppings_list = toppings
+            size = request.data["size"]
+
+            size = Size.objects.get(name = size)
+            type = Type.objects.get(name = "square")
+
+            pizza = Pizza( name = name, type_id = type.id , size = size)
+            pizza.save()
+
+            for topping in toppings:
+                topping_obj = Topping.objects.get(name = topping)
+                pizza.topping.add(topping_obj)
+                pizza.save()
+            size_name = size.name
+
+            response = {"name":name,"size":size_name,"type": "square","toppings": toppings_list}
+
+            return Response(response, status=status.HTTP_201_CREATED)
+        except:
+            return Response(errors_response, status=status.HTTP_400_BAD_REQUEST)
+
